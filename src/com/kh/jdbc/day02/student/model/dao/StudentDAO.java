@@ -55,7 +55,7 @@ public class StudentDAO {	// 데이터를 객체화하는 게 DAO 의 역할
 //				student.setAddress(rset.getString("ADDRESS"));
 //				student.setHobby(rset.getString("HOBBY"));
 //				student.setEnrollDate(rset.getDate("ENROLL_DATE"));
-				student = rsetToStudent(rset);
+				student = rsetToStudent(rset);	// 스튜던트 객체에 넣어주는 과정
 				sList.add(student);	// sList에 student 객체들을 모두 저장 (다른 객체도 많기 때문에 저장)
 			}
 				// 6. 자원해제(close())
@@ -63,35 +63,6 @@ public class StudentDAO {	// 데이터를 객체화하는 게 DAO 의 역할
 			stmt.close();
 			conn.close();
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return sList;
-	}
-
-	public List<Student> selectAllByName(String studentName) {
-					//  SELECT * FROM STUDENT_TBL WHERE STUDENT_NAME = '삼용자';
-		String query = "SELECT * FROM STUDENT_TBL WHERE STUDENT_NAME = '" + studentName + "'";	// 홑따옴표 주의!
-		ResultSet rset = null;
-		Student student = null;
-		List<Student> sList = new ArrayList<Student>();
-		
-		try {
-		Class.forName(DRIVER_NAME);
-		Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-		Statement stmt = conn.createStatement();
-		rset = stmt.executeQuery(query);
-		
-			while(rset.next()) {	// 여러개일때는 while로 진행
-				student = rsetToStudent(rset);
-				sList.add(student);
-			}
-			rset.close();
-			stmt.close();
-			conn.close();
-		
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -126,6 +97,35 @@ public class StudentDAO {	// 데이터를 객체화하는 게 DAO 의 역할
 		return student;
 	}
 
+	public List<Student> selectAllByName(String studentName) {
+					//  SELECT * FROM STUDENT_TBL WHERE STUDENT_NAME = '삼용자';
+		String query = "SELECT * FROM STUDENT_TBL WHERE STUDENT_NAME = '" + studentName + "'";	// 홑따옴표 주의!
+		ResultSet rset = null;
+		Student student = null;
+		List<Student> sList = new ArrayList<Student>();
+		
+		try {
+		Class.forName(DRIVER_NAME);
+		Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+		Statement stmt = conn.createStatement();
+		rset = stmt.executeQuery(query);
+		
+			while(rset.next()) {	// 여러개일때는 while로 진행
+				student = rsetToStudent(rset);
+				sList.add(student);
+			}
+			rset.close();
+			stmt.close();
+			conn.close();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sList;
+	}
+
 	public int insertStudent(Student student) {
 		/*
 		 * 1. 드라이버 등록
@@ -147,7 +147,7 @@ public class StudentDAO {	// 데이터를 객체화하는 게 DAO 의 역할
 																		+ "'"+student.getAddress()+"', "
 																				+ "'"+student.getHobby()+"', "
 																						+ "SYSDATE)";	// 이것처럼 변신 가능
-		int result = -1;	// 동작안하면 -1이 되게 -1로 선언
+		int result = -1;	// 동작안하면 -1이 되게 -1로 선언, insert는 int 로 받는다
 		try {
 				// 1. 드라이버 등록
 			Class.forName(DRIVER_NAME);
