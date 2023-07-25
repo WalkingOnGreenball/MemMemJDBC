@@ -1,6 +1,7 @@
 package com.kh.jdbc.day04.student.model.service;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.kh.jdbc.day04.student.common.JDBCTemplate;
@@ -20,8 +21,14 @@ public class StudentService {
 
 	public List<Student> selectAll() {
 		Connection conn = jdbcTemplate.createConnection();
-		List<Student> sList = sDao.selectAll(conn);
-		jdbcTemplate.close();
+		List<Student> sList = null;
+		
+		try {
+			sList = sDao.selectAll(conn);
+			jdbcTemplate.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return sList;
 	}
 
@@ -42,13 +49,11 @@ public class StudentService {
 	public int insertNewStudent(Student student) {
 		Connection conn = jdbcTemplate.createConnection();
 		int rusult = sDao.insertNewStudent(conn, student);
-		jdbcTemplate.close();
-		return rusult;
-	}
-
-	public int deleteStudent(String studentId) {
-		Connection conn = jdbcTemplate.createConnection();
-		int rusult = sDao.deleteStudent(conn, studentId);
+		if(rusult > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
 		jdbcTemplate.close();
 		return rusult;
 	}
@@ -56,6 +61,23 @@ public class StudentService {
 	public int modifyStudent(Student student) {
 		Connection conn = jdbcTemplate.createConnection();
 		int rusult = sDao.modifyStudent(conn, student);
+		if(rusult > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		jdbcTemplate.close();
+		return rusult;
+	}
+
+	public int deleteStudent(String studentId) {
+		Connection conn = jdbcTemplate.createConnection();
+		int rusult = sDao.deleteStudent(conn, studentId);
+		if(rusult > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
 		jdbcTemplate.close();
 		return rusult;
 	}
